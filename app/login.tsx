@@ -1,6 +1,8 @@
 import {useState} from 'react';
-import {ActivityIndicator,Alert,KeyboardAvoidingView,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,useWindowDimensions} from 'react-native';
+import {ActivityIndicator,Alert,Image,KeyboardAvoidingView,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,useWindowDimensions} from 'react-native';
 import {router} from 'expo-router';
+import {LinearGradient} from 'expo-linear-gradient';
+import {Feather} from '@expo/vector-icons';
 import {login} from '../src/services/auth';
 import {api,apiMessage} from '../src/services/api';
 import {theme} from '../src/theme';
@@ -31,41 +33,41 @@ export default function Login(){
  return <KeyboardAvoidingView style={styles.root} behavior={Platform.OS==='ios'?'padding':undefined}>
   <ScrollView contentContainerStyle={[styles.content,{minHeight:height}]} keyboardShouldPersistTaps="handled">
    <View style={styles.brand}>
-    <View style={styles.logoRow} accessibilityLabel="Vitalis">
-     <Text style={styles.logoV}>V</Text><Text style={styles.logoName}>italis</Text>
-    </View>
+    <Image source={require("../assets/images/logo.png")} style={styles.logo} resizeMode="contain" accessibilityLabel="Vitalis"/>
     <Text style={styles.subtitle}>Registro clínico de sessões</Text>
    </View>
    <View style={styles.form}>
-    <View style={styles.field}><Text style={styles.fieldIcon}>✉</Text><TextInput style={styles.input} placeholder="E-mail" placeholderTextColor="#718096" autoCapitalize="none" autoCorrect={false} autoComplete="email" keyboardType="email-address" value={email} onChangeText={setEmail} accessibilityLabel="E-mail"/></View>
-    <View style={styles.field}><Text style={styles.fieldIcon}>♙</Text><TextInput style={styles.input} placeholder="Senha" placeholderTextColor="#718096" secureTextEntry autoComplete="password" value={senha} onChangeText={setSenha} accessibilityLabel="Senha"/></View>
+    <View style={styles.field}><Feather name="mail" size={17} color="#657185" style={styles.fieldIcon}/><TextInput style={styles.input} placeholder="E-mail" placeholderTextColor="#718096" autoCapitalize="none" autoCorrect={false} autoComplete="email" keyboardType="email-address" value={email} onChangeText={setEmail} accessibilityLabel="E-mail"/></View>
+    <View style={styles.field}><Feather name="lock" size={17} color="#657185" style={styles.fieldIcon}/><TextInput style={styles.input} placeholder="Senha" placeholderTextColor="#718096" secureTextEntry autoComplete="password" value={senha} onChangeText={setSenha} accessibilityLabel="Senha"/></View>
     <Pressable style={styles.forgot} onPress={recover} disabled={resetBusy}><Text style={styles.forgotText}>{resetBusy?'Enviando...':'Esqueci a senha'}</Text></Pressable>
-    <Pressable style={[styles.enter,busy&&styles.disabled]} onPress={enter} disabled={busy} accessibilityRole="button">{busy?<ActivityIndicator color="#fff"/>:<Text style={styles.enterText}>Entrar</Text>}</Pressable>
-    <Pressable style={styles.biometric} onPress={()=>Alert.alert('Biometria','Disponível após a configuração de autenticação biométrica segura no dispositivo.')} accessibilityRole="button"><Text style={styles.shield}>♢</Text><Text style={styles.biometricText}>Entrar com biometria</Text></Pressable>
+    <Pressable style={[styles.enter,busy&&styles.disabled]} onPress={enter} disabled={busy} accessibilityRole="button"><LinearGradient colors={['#7445B9','#A080D0']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.gradient}>{busy?<ActivityIndicator color="#fff"/>:<Text style={styles.enterText}>Entrar</Text>}</LinearGradient></Pressable>
+    <Pressable style={styles.biometric} onPress={()=>Alert.alert('Biometria','Disponível após a configuração de autenticação biométrica segura no dispositivo.')} accessibilityRole="button"><Feather name="shield" size={17} color="#7446B6"/><Text style={styles.biometricText}>Entrar com biometria</Text></Pressable>
    </View>
-   <Text style={styles.footer}>Funciona offline após o primeiro acesso</Text>
+   <View style={styles.footerArea}><Text style={styles.footer}>Funciona offline após o primeiro acesso</Text></View>
   </ScrollView>
  </KeyboardAvoidingView>;
 }
 const styles=StyleSheet.create({
  root:{flex:1,backgroundColor:'#F3EFF8'},
- content:{paddingHorizontal:21,paddingTop:0,paddingBottom:20,alignItems:'stretch'},
- brand:{alignItems:'center',marginTop:Platform.OS==='web'?53:65},
+ content:{flexGrow:1,paddingHorizontal:21,paddingBottom:25,alignItems:'stretch'},
+ brand:{alignItems:'center',marginTop:Platform.OS==='web'?42:54},
  logoRow:{flexDirection:'row',alignItems:'center',justifyContent:'center',height:76},
  logoV:{fontSize:72,fontWeight:'900',fontStyle:'italic',letterSpacing:-13,color:'#7446B6',transform:[{rotate:'-12deg'}],marginRight:8},
  logoName:{fontSize:43,fontWeight:'800',letterSpacing:-2,color:'#252E34'},
- subtitle:{marginTop:0,color:'#5C6B85',fontSize:13,textAlign:'center'},
- form:{marginTop:65},
+ subtitle:{marginTop:-7,color:'#5C6B85',fontSize:13,textAlign:'center'},
+ form:{marginTop:53},
  field:{height:51,borderRadius:28,backgroundColor:'#FFFFFF',borderWidth:1,borderColor:'#DED8EB',flexDirection:'row',alignItems:'center',marginBottom:12,paddingHorizontal:17},
- fieldIcon:{fontSize:18,width:26,color:'#606D7F',textAlign:'left'},
+ fieldIcon:{marginRight:12},
  input:{flex:1,fontSize:14,color:'#24323C',height:'100%',paddingVertical:0,outlineStyle:'none'} as any,
  forgot:{alignSelf:'flex-end',marginTop:1,marginBottom:29,paddingVertical:4,paddingLeft:12},
  forgotText:{color:'#7040BA',fontSize:12},
- enter:{height:56,borderRadius:24,backgroundColor:'#7845C0',alignItems:'center',justifyContent:'center'},
+ enter:{height:56,borderRadius:24,overflow:'hidden'},
+ gradient:{flex:1,alignItems:'center',justifyContent:'center'},
  enterText:{fontSize:16,fontWeight:'700',color:'#FFFFFF'},
  disabled:{opacity:0.65},
  biometric:{height:50,borderRadius:28,borderWidth:1,borderColor:'#DED8EB',backgroundColor:'#FFFFFF',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:13,gap:10},
  shield:{fontSize:23,color:'#7446B6'},
  biometricText:{fontSize:14,color:'#1D2834'},
- footer:{marginTop:'auto',paddingTop:50,textAlign:'center',fontSize:12,color:'#6B7590'}
+ footerArea:{flex:1,minHeight:85,justifyContent:'flex-end'},
+ footer:{textAlign:'center',fontSize:12,color:'#6B7590'}
 });
