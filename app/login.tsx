@@ -12,6 +12,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [busy, setBusy] = useState(false);
   const [resetBusy, setResetBusy] = useState(false);
+  const [notice, setNotice] = useState<{text:string;ok:boolean}|null>(null);
   const { height } = useWindowDimensions();
 
  async function enter(){
