@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Vitalis",
+    "slug": "vitalis-mobile",
+    "scheme": "vitalismobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-sqlite"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "br.com.appvitalis.mobile"
+    },
+    "android": {
+      "package": "br.com.appvitalis.mobile"
+    }
+  }
+}
