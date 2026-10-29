@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {ActivityIndicator,Alert,Image,KeyboardAvoidingView,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,useWindowDimensions} from 'react-native';
+import {ActivityIndicator,Image,KeyboardAvoidingView,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,useWindowDimensions} from 'react-native';
 import {router} from 'expo-router';
 import {LinearGradient} from 'expo-linear-gradient';
 import {Feather} from '@expo/vector-icons';
@@ -15,19 +15,21 @@ export default function Login() {
   const { height } = useWindowDimensions();
 
  async function enter(){
-  if(!email.trim()||!senha){Alert.alert('Atenção','Informe seu e-mail e senha.');return;}
+  if(!email.trim()||!senha){setNotice({text:'Informe seu e-mail e senha.',ok:false});return;}
+  setNotice(null);
   setBusy(true);
   try{await login(email,senha);router.replace('/home');}
-  catch(e){Alert.alert('Não foi possível entrar',apiMessage(e));}
+  catch(e){setNotice({text:apiMessage(e),ok:false});}
   finally{setBusy(false);}
  }
  async function recover(){
-  if(!email.trim()){Alert.alert('Recuperar senha','Informe seu e-mail no campo acima para receber o código de recuperação.');return;}
+  if(!email.trim()){setNotice({text:'Informe seu e-mail para receber o código de recuperação.',ok:false});return;}
+  setNotice(null);
   setResetBusy(true);
   try{
    await api.post('/api/autenticacao/recuperar-senha',{email:email.trim()});
-   Alert.alert('Recuperação de senha','Se o e-mail estiver cadastrado, você receberá um código. A etapa de redefinição será integrada à próxima tela.');
-  }catch(e){Alert.alert('Recuperação de senha',apiMessage(e));}
+   setNotice({text:'Se o e-mail estiver cadastrado, você receberá um código. A etapa de redefinição ainda será integrada.',ok:true});
+  }catch(e){setNotice({text:apiMessage(e),ok:false});}
   finally{setResetBusy(false);}
  }
  return <KeyboardAvoidingView style={styles.root} behavior={Platform.OS==='ios'?'padding':undefined}>
@@ -37,11 +39,12 @@ export default function Login() {
     <Text style={styles.subtitle}>Registro clínico de sessões</Text>
    </View>
    <View style={styles.form}>
+    {notice?<View style={[styles.notice,notice.ok?styles.noticeOk:styles.noticeError]}><Text style={styles.noticeText}>{notice.text}</Text></View>:null}
     <View style={styles.field}><Feather name="mail" size={17} color="#657185" style={styles.fieldIcon}/><TextInput style={styles.input} placeholder="E-mail" placeholderTextColor="#718096" autoCapitalize="none" autoCorrect={false} autoComplete="email" keyboardType="email-address" value={email} onChangeText={setEmail} accessibilityLabel="E-mail"/></View>
     <View style={styles.field}><Feather name="lock" size={17} color="#657185" style={styles.fieldIcon}/><TextInput style={styles.input} placeholder="Senha" placeholderTextColor="#718096" secureTextEntry autoComplete="password" value={senha} onChangeText={setSenha} accessibilityLabel="Senha"/></View>
     <Pressable style={styles.forgot} onPress={recover} disabled={resetBusy}><Text style={styles.forgotText}>{resetBusy?'Enviando...':'Esqueci a senha'}</Text></Pressable>
     <Pressable style={[styles.enter,busy&&styles.disabled]} onPress={enter} disabled={busy} accessibilityRole="button"><LinearGradient colors={['#7445B9','#A080D0']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.gradient}>{busy?<ActivityIndicator color="#fff"/>:<Text style={styles.enterText}>Entrar</Text>}</LinearGradient></Pressable>
-    <Pressable style={styles.biometric} onPress={()=>Alert.alert('Biometria','Disponível após a configuração de autenticação biométrica segura no dispositivo.')} accessibilityRole="button"><Feather name="shield" size={17} color="#7446B6"/><Text style={styles.biometricText}>Entrar com biometria</Text></Pressable>
+    <Pressable style={styles.biometric} onPress={()=>setNotice({text:Platform.OS==='web'?'Biometria disponível somente no aplicativo instalado em dispositivo compatível.':'O desbloqueio biométrico ainda precisa ser configurado após o primeiro login.',ok:false})} accessibilityRole="button"><Feather name="shield" size={17} color="#7446B6"/><Text style={styles.biometricText}>Entrar com biometria</Text></Pressable>
    </View>
    <View style={styles.footerArea}><Text style={styles.footer}>Funciona offline após o primeiro acesso</Text></View>
   </ScrollView>
@@ -67,5 +70,9 @@ const styles=StyleSheet.create({
  shield:{fontSize:23,color:'#7446B6'},
  biometricText:{fontSize:14,color:'#1D2834'},
  footerArea:{flex:1,minHeight:85,justifyContent:'flex-end'},
- footer:{textAlign:'center',fontSize:12,color:'#6B7590'}
+ footer:{textAlign:'center',fontSize:12,color:'#6B7590'},
+ notice:{padding:12,borderRadius:12,marginBottom:12,borderWidth:1},
+ noticeOk:{backgroundColor:'#E8F6F0',borderColor:'#9AD2BE'},
+ noticeError:{backgroundColor:'#FDECEE',borderColor:'#EFB6BC'},
+ noticeText:{fontSize:13,color:'#29333B',lineHeight:19}
 });
