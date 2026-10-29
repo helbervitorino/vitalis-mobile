@@ -33,7 +33,7 @@ export default function Login() {
  return <KeyboardAvoidingView style={styles.root} behavior={Platform.OS==='ios'?'padding':undefined}>
   <ScrollView contentContainerStyle={[styles.content,{minHeight:height}]} keyboardShouldPersistTaps="handled">
    <View style={styles.brand}>
-    <Image source={require("../assets/images/logo.png")} style={styles.logoV} resizeMode="contain" accessibilityLabel="Vitalis"/>
+    <Image source={require("../assets/images/logo.png")} style={styles.logo} resizeMode="contain" accessibilityLabel="Vitalis"/>
     <Text style={styles.subtitle}>Registro clínico de sessões</Text>
    </View>
    <View style={styles.form}>
